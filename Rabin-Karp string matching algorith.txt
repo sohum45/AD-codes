@@ -1,0 +1,185 @@
+Rabin-Karp string matching algorithm 
+
+
+public class RabinKarp {
+
+    public final static int d = 256;
+    public final static int q = 101; // A prime number
+
+    static void search(String pat, String txt) {
+        int M = pat.length();
+        int N = txt.length();
+        int i, j;
+        int p = 0; // hash value for pattern
+        int t = 0; // hash value for txt
+        int h = 1;
+
+        // The value of h would be "pow(d, M-1)%q"
+        for (i = 0; i < M - 1; i++)
+            h = (h * d) % q;
+
+        // Calculate the hash value of pattern and first
+        // window of text
+        for (i = 0; i < M; i++) {
+            p = (d * p + pat.charAt(i)) % q;
+            t = (d * t + txt.charAt(i)) % q;
+        }
+
+        // Slide the pattern over text one by one
+        for (i = 0; i <= N - M; i++) {
+
+            // Check the hash values of current window of text
+            // and pattern. If the hash values match then only
+            // check for characters one by one
+            if (p == t) {
+                /* Check for characters one by one */
+                for (j = 0; j < M; j++) {
+                    if (txt.charAt(i + j) != pat.charAt(j))
+                        break;
+                }
+
+                // if p == t and pat[0...M-1] = txt[i, i+1, ...i+M-1]
+                if (j == M)
+                    System.out.println("Pattern found at index " + i);
+            }
+
+            // Calculate hash value for next window of text: Remove
+            // leading digit, add trailing digit
+            if (i < N - M) {
+                t = (d * (t - txt.charAt(i) * h) + txt.charAt(i + 1)) % q;
+
+                // We might get negative value of t, converting it
+                // to positive
+                if (t < 0)
+                    t = (t + q);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        String txt = "I LOVE JAVA";
+        String pat = "JAVA";
+
+        search(pat, txt);
+    }
+}
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Symbol table/Dictionary 
+
+
+import java.util.HashMap;
+
+public class SymbolTable<K, V> {
+    private HashMap<K, V> map;
+
+    public SymbolTable() {
+        map = new HashMap<>();
+    }
+
+    // Add a key-value pair to the symbol table
+    public void put(K key, V value) {
+        map.put(key, value);
+    }
+
+    // Get the value associated with a key
+    public V get(K key) {
+        return map.get(key);
+    }
+
+    // Remove a key-value pair from the symbol table
+    public V remove(K key) {
+        return map.remove(key);
+    }
+
+    // Check if the symbol table contains a key
+    public boolean contains(K key) {
+        return map.containsKey(key);
+    }
+
+    // Check if the symbol table is empty
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
+
+    // Get the number of key-value pairs in the symbol table
+    public int size() {
+        return map.size();
+    }
+
+    // Clear all key-value pairs from the symbol table
+    public void clear() {
+        map.clear();
+    }
+
+    // Print all key-value pairs in the symbol table
+    public void print() {
+        for (K key : map.keySet()) {
+            System.out.println(key + " : " + map.get(key));
+        }
+    }
+
+    public static void main(String[] args) {
+        SymbolTable<String, Integer> symbolTable = new SymbolTable<>();
+
+        // Add key-value pairs
+        symbolTable.put("Alice", 30);
+        symbolTable.put("Bob", 25);
+        symbolTable.put("Charlie", 35);
+
+        // Print the symbol table
+        System.out.println("Symbol Table:");
+        symbolTable.print();
+
+        // Get a value
+        System.out.println("Value for 'Alice': " + symbolTable.get("Alice"));
+
+        // Check if a key is present
+        System.out.println("Contains 'Bob': " + symbolTable.contains("Bob"));
+
+        // Remove a key-value pair
+        symbolTable.remove("Bob");
+        System.out.println("After removing 'Bob':");
+        symbolTable.print();
+
+        // Check the size
+        System.out.println("Size: " + symbolTable.size());
+
+        // Clear the symbol table
+        symbolTable.clear();
+        System.out.println("After clearing:");
+        System.out.println("Is empty: " + symbolTable.isEmpty());
+    }
+}
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Hash table 
+
+
+
+import java.util.Enumeration;
+import java.util.Hashtable;
+
+public class Main {
+    public static void main(String[] args) {
+        Hashtable<String, Integer> hashtable = new Hashtable<>();
+        hashtable.put("A", 1);
+        hashtable.put("B", 2);
+        hashtable.put("C", 3);
+
+        int valueA = hashtable.get("A");
+        System.out.println("Value of A: " + valueA);
+
+        hashtable.remove("B");
+
+        Enumeration<String> keys = hashtable.keys();
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            System.out.println("Key: " + key + ", Value: " + hashtable.get(key));
+        }
+    }
+}
+

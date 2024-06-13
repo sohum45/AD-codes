@@ -1,0 +1,196 @@
+Merge sort 
+
+class MergeSort {
+    void merge(int arr[], int l, int m, int r) {
+        int n1 = m - l + 1;
+        int n2 = r - m;
+
+        int L[] = new int[n1];
+        int R[] = new int[n2];
+
+        for (int i = 0; i < n1; ++i)
+            L[i] = arr[l + i];
+        for (int j = 0; j < n2; ++j)
+            R[j] = arr[m + 1 + j];
+
+        int i = 0, j = 0;
+        int k = l;
+        while (i < n1 && j < n2) {
+            if (L[i] <= R[j]) {
+                arr[k] = L[i];
+                i++;
+            } else {
+                arr[k] = R[j];
+                j++;
+            }
+            k++;
+        }
+
+        while (i < n1) {
+            arr[k] = L[i];
+            i++;
+            k++;
+        }
+
+        while (j < n2) {
+            arr[k] = R[j];
+            j++;
+            k++;
+        }
+    }
+
+    void sort(int arr[], int l, int r) {
+        if (l < r) {
+            int m = (l + r) / 2;
+            sort(arr, l, m);
+            sort(arr, m + 1, r);
+            merge(arr, l, m, r);
+        }
+    }
+
+    static void printArray(int arr[]) {
+        int n = arr.length;
+        for (int i = 0; i < n; ++i)
+            System.out.print(arr[i] + " ");
+        System.out.println();
+    }
+
+    public static void main(String args[]) {
+        int arr[] = { 12, 11, 13, 5, 6, 7 };
+        System.out.println("Given Array:");
+        printArray(arr);
+
+        MergeSort ob = new MergeSort();
+        ob.sort(arr, 0, arr.length - 1);
+
+        System.out.println("\nSorted array:");
+        printArray(arr);
+    }
+}
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Quick Sort Implementation in Java
+
+public class QuickSort {
+
+    // Method to perform quicksort on an array
+    public static void quickSort(int[] arr, int low, int high) {
+        if (low < high) {
+            // Partition the array and get the pivot index
+            int pivotIndex = partition(arr, low, high);
+
+            // Recursively sort elements before and after partition
+            quickSort(arr, low, pivotIndex - 1);
+            quickSort(arr, pivotIndex + 1, high);
+        }
+    }
+
+    // Method to partition the array and return the pivot index
+    private static int partition(int[] arr, int low, int high) {
+        int pivot = arr[high];
+        int i = low - 1; // Index of smaller element
+
+        for (int j = low; j < high; j++) {
+            // If current element is smaller than or equal to the pivot
+            if (arr[j] <= pivot) {
+                i++;
+                // Swap arr[i] and arr[j]
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+
+        // Swap arr[i + 1] and arr[high] (or pivot)
+        int temp = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = temp;
+
+        return i + 1;
+    }
+
+    // Utility method to print the array
+    public static void printArray(int[] arr) {
+        for (int num : arr) {
+            System.out.print(num + " ");
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {10, 7, 8, 9, 1, 5};
+        int n = arr.length;
+
+        System.out.println("Original array:");
+        printArray(arr);
+
+        quickSort(arr, 0, n - 1);
+
+        System.out.println("Sorted array:");
+        printArray(arr);
+    }
+}
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Coumting Inversion
+
+public class InversionCount {
+
+    // Function to count inversions
+    public static int countInversions(int[] arr) {
+        int[] temp = new int[arr.length];
+        return mergeSortAndCount(arr, temp, 0, arr.length - 1);
+    }
+
+    // Modified merge sort that counts inversions
+    private static int mergeSortAndCount(int[] arr, int[] temp, int left, int right) {
+        int mid, invCount = 0;
+        if (left < right) {
+            mid = (left + right) / 2;
+
+            invCount += mergeSortAndCount(arr, temp, left, mid);
+            invCount += mergeSortAndCount(arr, temp, mid + 1, right);
+
+            invCount += mergeAndCount(arr, temp, left, mid, right);
+        }
+        return invCount;
+    }
+
+    // Merge two sorted halves and count inversions
+    private static int mergeAndCount(int[] arr, int[] temp, int left, int mid, int right) {
+        int i = left; // Starting index for left subarray
+        int j = mid + 1; // Starting index for right subarray
+        int k = left; // Starting index to be sorted
+        int invCount = 0;
+
+        while (i <= mid && j <= right) {
+            if (arr[i] <= arr[j]) {
+                temp[k++] = arr[i++];
+            } else {
+                temp[k++] = arr[j++];
+                invCount += (mid + 1) - i; // Number of inversions
+            }
+        }
+
+        while (i <= mid) {
+            temp[k++] = arr[i++];
+        }
+
+        while (j <= right) {
+            temp[k++] = arr[j++];
+        }
+
+        for (i = left; i <= right; i++) {
+            arr[i] = temp[i];
+        }
+
+        return invCount;
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {1, 20, 6, 4, 5};
+        System.out.println("Number of inversions are: " + countInversions(arr));
+    }
+}
